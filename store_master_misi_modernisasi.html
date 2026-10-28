@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Store Master: Misi Modernisasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --exp-orange: #FF5722;
+            --exp-blue: #0D47A1;
+            --exp-yellow: #FFC107;
+            --exp-green: #00C853;
+            --exp-red: #D50000;
+            --exp-light: #F4F5F7;
+            --border-width: 3px;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--exp-light);
+            /* Tech/Expedition map background pattern */
+            background-image: 
+                linear-gradient(rgba(13, 71, 161, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(13, 71, 161, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: center;
+            color: var(--exp-blue);
+            margin: 0;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Expedition UI Classes */
+        .neo-box {
+            background-color: #fff;
+            border: var(--border-width) solid var(--exp-blue);
+            box-shadow: 4px 4px 0px 0px var(--exp-blue);
+            border-radius: 12px;
+        }
+
+        .neo-btn {
+            background-color: var(--exp-yellow);
+            border: var(--border-width) solid var(--exp-blue);
+            box-shadow: 4px 4px 0px 0px var(--exp-blue);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.1s ease;
+            cursor: pointer;
+            border-radius: 8px;
+            color: var(--exp-blue);
+        }
+
+        .neo-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px var(--exp-blue);
+        }
+
+        .neo-btn-primary { background-color: var(--exp-orange); color: white; }
+        .neo-btn-blue { background-color: var(--exp-blue); color: white; }
+        .neo-btn-green { background-color: var(--exp-green); color: white; }
+        .neo-btn-red { background-color: var(--exp-red); color: white; }
+
+        .neo-input {
+            border: var(--border-width) solid var(--exp-blue);
+            box-shadow: 3px 3px 0px 0px rgba(13, 71, 161, 0.2);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            width: 100%;
+            background-color: #FAFAFA;
+            color: var(--exp-blue);
+        }
+
+        .neo-input:focus {
+            outline: none;
+            background-color: #FFF3E0;
+            border-color: var(--exp-orange);
+        }
+
+        /* Barcode Decor for Expedition Theme */
+        .barcode-decor {
+            height: 35px;
+            background: repeating-linear-gradient(90deg, var(--exp-blue), var(--exp-blue) 4px, transparent 4px, transparent 8px, var(--exp-blue) 8px, var(--exp-blue) 12px, transparent 12px, transparent 18px);
+            width: 100%;
+            opacity: 0.9;
+            border-radius: 4px;
+        }
+
+        /* Card Animation */
+        .card-enter {
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .animate-pop {
+            animation: pop 0.3s ease-in-out;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            border: 2px solid var(--exp-blue);
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--exp-orange);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Avatar */
+        .mentor-avatar {
+            width: 70px;
+            height: 70px;
+            background-color: var(--exp-blue);
+            border: 3px solid var(--exp-orange);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 3px 3px 0px 0px rgba(13, 71, 161, 0.5);
+        }
+
+        /* Hide sections utility */
+        .hidden-section { display: none !important; }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border: 2px solid var(--exp-blue);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            background: #fff;
+            margin-left: 4px;
+            opacity: 0.3;
+            filter: grayscale(100%);
+            transition: all 0.3s;
+        }
+        .badge.active {
+            opacity: 1;
+            filter: grayscale(0%);
+            animation: pop 0.5s ease;
+            box-shadow: 2px 2px 0px var(--exp-blue);
+        }
+        .badge-novice { background-color: var(--exp-yellow); color: var(--exp-blue); }
+        .badge-pro { background-color: var(--exp-orange); color: white; }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- TOP HUD (Hidden by default) -->
+    <div id="hud" class="hidden-section fixed top-0 left-0 w-full p-4 z-20 pointer-events-none">
+        <div class="max-w-md mx-auto neo-box p-3 flex flex-col gap-2 pointer-events-auto bg-white/95 backdrop-blur shadow-lg">
+            <div class="flex justify-between items-center">
+                <div class="font-bold text-sm tracking-wide">📦 Target Akurasi: >80%</div>
+                <button id="btn-mute" class="neo-btn px-3 py-1 text-xs bg-gray-200">🔊 BGM ON</button>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="font-black text-sm w-16 text-[var(--exp-orange)]">EXP: <span id="xp-counter">0</span></div>
+                <div class="progress-container flex-grow">
+                    <div id="progress-bar" class="progress-fill"></div>
+                </div>
+            </div>
+            <div class="flex justify-start text-xs mt-1">
+                <span class="font-bold">Lencana: </span>
+                <span id="badge-1" class="badge badge-novice">🌟 Kurir Handal</span>
+                <span id="badge-2" class="badge badge-pro">🏆 Master Transit</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <main id="app-container" class="w-full max-w-md w-full relative z-10 pb-16">
+        
+        <!-- SECTION: LOGIN / GATEWAY -->
+        <section id="screen-login" class="flex flex-col gap-6">
+            <div class="neo-box p-8 text-center bg-white border-t-8 border-t-[var(--exp-orange)] relative overflow-hidden">
+                <div class="barcode-decor mb-4"></div>
+                <h1 class="text-4xl font-black mb-1 uppercase tracking-tighter text-[var(--exp-blue)]">Express<br>Logistics</h1>
+                <h2 class="text-sm font-bold bg-[var(--exp-orange)] text-white inline-block px-3 py-1 rounded-full mb-3 shadow-sm">Manifest Storage App v1.0</h2>
+                <p class="font-bold text-gray-600 text-sm">Validasi Kedatangan Truk & Klasifikasi Storage</p>
+            </div>
+
+            <div class="neo-box p-6 flex flex-col gap-4 bg-white">
+                <div>
+                    <label class="block font-bold mb-1 text-[var(--exp-blue)]">ID Petugas (Nama)</label>
+                    <input type="text" id="input-name" class="neo-input" placeholder="Scan atau Ketik Nama..." autocomplete="off">
+                </div>
+                <div>
+                    <label class="block font-bold mb-1 text-[var(--exp-blue)]">NIP / NIK</label>
+                    <input type="number" id="input-nik" class="neo-input" placeholder="Ketik NIK..." autocomplete="off">
+                </div>
+                <button id="btn-login" class="neo-btn neo-btn-primary py-3 text-lg mt-2 flex items-center justify-center gap-2">
+                    <span>Autentikasi Akun</span> <span>🔓</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION: BRIEFING -->
+        <section id="screen-briefing" class="hidden-section flex flex-col gap-4">
+            <div class="neo-box p-6">
+                <div class="flex items-center gap-4 mb-4 border-b-2 border-gray-200 pb-4">
+                    <div class="mentor-avatar">👨‍✈️</div>
+                    <div>
+                        <h3 class="font-black text-xl text-[var(--exp-blue)]">Dispatcher Senior</h3>
+                        <p class="text-sm font-bold text-gray-500">Pusat Distribusi</p>
+                    </div>
+                </div>
+                
+                <h4 class="font-black text-lg mb-2 text-[var(--exp-orange)]">⚠️ PESAN PUSAT (URGENT)</h4>
+                <p class="mb-4 font-bold text-sm bg-orange-50 p-3 border-l-4 border-[var(--exp-orange)] rounded shadow-sm text-gray-700">
+                    "Truk logistik baru saja merapat ke loading dock! Barang kosong di rak berarti kerugian, barang salah masuk storage berarti kekacauan manifest!<br>
+                    Tentukan rute storage barang dengan akurat!"
+                </p>
+
+                <h4 class="font-black text-sm mb-2 text-[var(--exp-blue)] uppercase">Objektif Misi:</h4>
+                <ul class="list-disc list-inside mb-5 font-semibold text-sm space-y-1 text-gray-700 bg-blue-50 p-3 rounded">
+                    <li>Validasi 10 Resi Kedatangan Barang.</li>
+                    <li>Hitung sisa barang (PKM - MAXDIS).</li>
+                    <li>Tentukan jalur storage: NS, SC, SK, atau SB.</li>
+                    <li>Raih Akurasi >80% untuk Cetak Laporan!</li>
+                </ul>
+
+                <button id="btn-start-tutorial" class="neo-btn neo-btn-blue w-full py-4 text-lg">Siap, Dispatcher! 🚚</button>
+            </div>
+        </section>
+
+        <!-- SECTION: TUTORIAL -->
+        <section id="screen-tutorial" class="hidden-section flex flex-col gap-4">
+            <div class="neo-box p-6 bg-blue-50">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="text-3xl">📋</div>
+                    <h3 class="font-black text-xl text-[var(--exp-blue)]">Buku Panduan Gudang</h3>
+                </div>
+                
+                <div class="space-y-3 font-semibold text-sm text-gray-700">
+                    <div class="p-3 border-2 border-[var(--exp-blue)] bg-white rounded shadow-sm">
+                        <strong>📦 Aturan Pallet:</strong> Penataan (tier) harus terkunci. Berat di bawah, ringan di atas. Jarak tinggi barang dengan rak atas = 5cm.
+                    </div>
+                    <div class="p-3 border-2 border-[var(--exp-blue)] bg-white rounded shadow-sm">
+                        <strong>🧮 Rumus Analisa:</strong> Cari sisa barang yang tak muat di rak display (satuan karton):<br>
+                        <span class="bg-[var(--exp-blue)] text-white px-2 py-1 inline-block mt-2 font-bold rounded">SISA = (PKM - MAXDIS)</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="border-2 border-[var(--exp-blue)] p-2 bg-green-50 rounded"><b class="block text-center text-green-700 mb-1">NS (No Storage)</b> PKM ≤ Maxdis</div>
+                        <div class="border-2 border-[var(--exp-blue)] p-2 bg-blue-50 rounded"><b class="block text-center text-blue-700 mb-1">SC (Campur)</b> Sisa ≤ 25% Maxpallet</div>
+                        <div class="border-2 border-[var(--exp-blue)] p-2 bg-yellow-50 rounded"><b class="block text-center text-yellow-700 mb-1">SK (Kecil)</b> 26% - 50% Maxpallet</div>
+                        <div class="border-2 border-[var(--exp-blue)] p-2 bg-red-50 rounded"><b class="block text-center text-red-700 mb-1">SB (Besar)</b> ≥ 51% Maxpallet</div>
+                    </div>
+                </div>
+
+                <button id="btn-start-game" class="neo-btn neo-btn-green w-full py-4 mt-5 text-lg">Mulai Sortir Paket! ⏱️</button>
+            </div>
+        </section>
+
+        <!-- SECTION: GAMEPLAY -->
+        <section id="screen-game" class="hidden-section flex flex-col gap-4 mt-20">
+            <!-- Dialog Card -->
+            <div id="dialog-card" class="neo-box p-6 bg-white card-enter relative border-t-8 border-t-[var(--exp-orange)]">
+                <div class="absolute -top-5 right-4 bg-[var(--exp-blue)] text-white px-4 py-1 font-black text-sm rounded shadow-md border-2 border-white">
+                    RESI #<span id="q-number">1</span>/10
+                </div>
+                
+                <div class="barcode-decor mt-2 mb-3"></div>
+                <p id="q-scenario" class="font-bold text-lg mb-4 text-center text-[var(--exp-blue)]">Menurunkan Pengiriman...</p>
+                
+                <div class="grid grid-cols-2 gap-3 mb-6 font-mono text-sm bg-gray-50 p-4 border-2 border-[var(--exp-blue)] rounded border-dashed">
+                    <div class="font-bold text-gray-500 border-b border-gray-300 pb-1">PKM (Total)</div>
+                    <div id="data-pkm" class="text-right font-black text-[var(--exp-blue)] border-b border-gray-300 pb-1">0 ctn</div>
+                    
+                    <div class="font-bold text-gray-500 border-b border-gray-300 pb-1">MAXDIS (Rak)</div>
+                    <div id="data-maxdis" class="text-right font-black text-[var(--exp-orange)] border-b border-gray-300 pb-1">0 ctn</div>
+                    
+                    <div class="font-bold text-gray-500 pt-1">MAXPALLET</div>
+                    <div id="data-maxpallet" class="text-right font-black text-gray-800 pt-1">0 ctn</div>
+                </div>
+
+                <p class="font-black text-center mb-3 text-sm text-[var(--exp-blue)] uppercase">Tentukan Rute Storage!</p>
+                
+                <!-- Answer Buttons -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button class="answer-btn neo-btn neo-btn-green py-4 text-xl" data-answer="NS">NS</button>
+                    <button class="answer-btn neo-btn neo-btn-blue py-4 text-xl" data-answer="SC">SC</button>
+                    <button class="answer-btn neo-btn bg-[var(--exp-yellow)] py-4 text-xl" data-answer="SK">SK</button>
+                    <button class="answer-btn neo-btn neo-btn-red py-4 text-xl" data-answer="SB">SB</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: FEEDBACK OVERLAY -->
+        <div id="feedback-modal" class="hidden-section fixed inset-0 z-50 flex items-center justify-center bg-[var(--exp-blue)]/80 backdrop-blur-sm p-4">
+            <div id="feedback-card" class="neo-box p-8 w-full max-w-sm text-center transform transition-transform">
+                <div id="feedback-icon" class="text-6xl mb-4">✅</div>
+                <h2 id="feedback-title" class="text-3xl font-black mb-2 uppercase tracking-tight">VALID!</h2>
+                <p id="feedback-desc" class="font-semibold text-gray-700 mb-6 bg-white p-4 border-2 border-gray-200 rounded text-sm">Penjelasan...</p>
+                <button id="btn-next-q" class="neo-btn w-full py-4 text-lg">Scan Resi Berikutnya ➔</button>
+            </div>
+        </div>
+
+        <!-- SECTION: RESULTS -->
+        <section id="screen-result" class="hidden-section flex flex-col gap-4 mt-6">
+            <div class="neo-box p-8 text-center relative overflow-hidden bg-white border-t-8 border-t-[var(--exp-blue)]">
+                <div class="barcode-decor mb-4"></div>
+                
+                <div class="relative z-10">
+                    <h2 class="text-3xl font-black mb-2 text-[var(--exp-blue)]">MANIFEST SELESAI</h2>
+                    <div class="text-sm font-bold mb-5 bg-gray-100 text-gray-700 inline-block px-4 py-2 rounded-full border border-gray-300">
+                        ID: <span id="res-name">Nama</span> | NIK: <span id="res-nik">NIK</span>
+                    </div>
+                    
+                    <div class="bg-[var(--exp-light)] border-2 border-[var(--exp-blue)] p-5 mb-5 rounded shadow-sm">
+                        <p class="font-bold text-gray-500 uppercase text-xs tracking-widest mb-1">Akurasi Sortir</p>
+                        <p id="res-score" class="text-6xl font-black text-[var(--exp-orange)]">0%</p>
+                    </div>
+
+                    <div id="res-status" class="text-xl font-black uppercase tracking-widest mb-3 p-3 border-2 border-[var(--exp-blue)] rounded">
+                        STATUS
+                    </div>
+                    <p id="res-message" class="font-semibold text-sm mb-6 text-gray-600">Pesan dispatcher...</p>
+
+                    <button onclick="location.reload()" class="neo-btn neo-btn-primary w-full py-4 text-lg">Mulai Shift Baru 🔄</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="fixed bottom-0 w-full text-center p-3 text-xs font-bold bg-white border-t-2 border-[var(--exp-blue)] z-10 hidden text-gray-600" id="footer">
+        Education & Training Dept. © 2026 | Express Logistics Div.
+    </footer>
+
+    <script>
+        // --- DATA & STATE ---
+        const gameState = {
+            name: '',
+            nik: '',
+            currentQ: 0,
+            score: 0,
+            isMuted: false,
+            audioCtx: null
+        };
+
+        // Note: Calculations are pre-computed in the 'explanation' based on the PDF rules.
+        // All data presented in CTN (Cartons) for clarity during mobile gameplay, 
+        // representing the post-fraction conversion state as requested by game mechanics.
+        const questions = [
+            {
+                scenario: "Produk Air Mineral (Ringan)",
+                data: { pkm: 40, maxdis: 60, maxpallet: 100 },
+                correct: "NS",
+                exp: "PKM (40) ≤ MAXDIS (60). Barang cukup ditaruh di rak display. Tidak butuh storage tambahan!"
+            },
+            {
+                scenario: "Produk Minyak Goreng (Berat)",
+                data: { pkm: 21, maxdis: 4, maxpallet: 100 },
+                correct: "SC",
+                exp: "Sisa = (21 - 4) = 17 ctn. 17 ctn adalah 17% dari Maxpallet (100). Karena ≤ 25%, maka statusnya SC (Storage Campur)!"
+            },
+            {
+                scenario: "Produk Mie Instan",
+                data: { pkm: 36, maxdis: 5, maxpallet: 100 },
+                correct: "SK",
+                exp: "Sisa = (36 - 5) = 31 ctn. 31 ctn adalah 31% dari Maxpallet (100). Karena berada di antara 26%-50%, statusnya SK (Storage Kecil)!"
+            },
+            {
+                scenario: "Produk Tisu Wajah (Promo)",
+                data: { pkm: 105, maxdis: 5, maxpallet: 100 },
+                correct: "SB",
+                exp: "Sisa = (105 - 5) = 100 ctn. 100 ctn adalah 100% dari Maxpallet. Karena ≥ 51%, maka statusnya SB (Storage Besar)!"
+            },
+            {
+                scenario: "Produk Susu Bayi",
+                data: { pkm: 20, maxdis: 25, maxpallet: 80 },
+                correct: "NS",
+                exp: "PKM (20) ≤ MAXDIS (25). Tidak ada sisa barang. Langsung display semua, status NS."
+            },
+            {
+                scenario: "Produk Kopi Sachet",
+                data: { pkm: 30, maxdis: 10, maxpallet: 100 },
+                correct: "SC",
+                exp: "Sisa = (30 - 10) = 20 ctn. 20 ctn dari 100 ctn = 20%. Status SC karena ≤ 25%."
+            },
+            {
+                scenario: "Produk Sabun Cuci Baju",
+                data: { pkm: 65, maxdis: 15, maxpallet: 100 },
+                correct: "SK",
+                exp: "Sisa = (65 - 15) = 50 ctn. 50 ctn dari 100 ctn = 50%. Tepat di batas maksimal SK (26% - 50%)."
+            },
+            {
+                scenario: "Produk Detergen Cair",
+                data: { pkm: 150, maxdis: 20, maxpallet: 200 },
+                correct: "SB",
+                exp: "Sisa = (150 - 20) = 130 ctn. Persentase: (130/200)*100 = 65%. Karena ≥ 51%, statusnya SB."
+            },
+            {
+                scenario: "Produk Biskuit Kaleng",
+                data: { pkm: 45, maxdis: 5, maxpallet: 200 },
+                correct: "SC",
+                exp: "Sisa = (45 - 5) = 40 ctn. Persentase: (40/200)*100 = 20%. Status SC (≤ 25%)."
+            },
+            {
+                scenario: "Produk Gula Pasir (Heavy)",
+                data: { pkm: 120, maxdis: 20, maxpallet: 150 },
+                correct: "SB",
+                exp: "Sisa = (120 - 20) = 100 ctn. Persentase: (100/150)*100 = 66.6%. Status SB (≥ 51%). Jangan lupa taruh di rak bawah karena berat!"
+            }
+        ];
+
+        // --- WEB AUDIO API (SYNTH) ---
+        let audioCtx;
+        let bgmOscillator;
+        let bgmGain;
+        let isBgmPlaying = false;
+        
+        // RPG Adventure scale (Heroic 8-bit vibe)
+        const melody = [261.63, 392.00, 329.63, 523.25, 392.00, 659.25, 523.25, 783.99]; 
+        let noteIndex = 0;
+        let bgmInterval;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if(audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playNote(freq, type = 'sine', duration = 0.1, vol = 0.1) {
+            if (!audioCtx || gameState.isMuted) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            // RPG sound envelope (snappier, punchier)
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function startBGM() {
+            if (!audioCtx || isBgmPlaying || gameState.isMuted) return;
+            isBgmPlaying = true;
+            
+            bgmInterval = setInterval(() => {
+                if(gameState.isMuted) return;
+                
+                // RPG Fast Arpeggio Melody (8-bit style)
+                const freq = melody[noteIndex % melody.length];
+                playNote(freq, 'square', 0.15, 0.03); 
+                
+                // RPG Bassline on every 4th step for driving energy
+                if(noteIndex % 4 === 0) {
+                    playNote(130.81, 'sawtooth', 0.2, 0.05);
+                }
+                
+                noteIndex++;
+            }, 180); // Fast RPG tempo
+        }
+
+        function toggleMute() {
+            gameState.isMuted = !gameState.isMuted;
+            const btn = document.getElementById('btn-mute');
+            btn.innerText = gameState.isMuted ? '🔇 BGM OFF' : '🔊 BGM ON';
+            btn.classList.toggle('bg-gray-200');
+            btn.classList.toggle('bg-red-500');
+            btn.classList.toggle('text-white');
+        }
+
+        // SFX - RPG Styled Sounds
+        const sfx = {
+            click: () => playNote(880, 'square', 0.05, 0.05), // Sharp RPG menu click
+            correct: () => {
+                // Item Get / Level Up ping (Fast arpeggio)
+                playNote(523.25, 'square', 0.1, 0.1); 
+                setTimeout(() => playNote(783.99, 'square', 0.1, 0.1), 80); 
+                setTimeout(() => playNote(1046.50, 'square', 0.2, 0.1), 160); 
+            },
+            wrong: () => {
+                // RPG Miss / Error buzzer (Low pitch drop)
+                playNote(150, 'sawtooth', 0.2, 0.15);
+                setTimeout(() => playNote(100, 'sawtooth', 0.3, 0.15), 150);
+            },
+            win: () => {
+                // Classic RPG Victory Fanfare
+                const notes = [523.25, 523.25, 523.25, 523.25, 415.30, 466.16, 523.25, 466.16, 523.25];
+                const timings = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
+                notes.forEach((freq, i) => {
+                    setTimeout(() => playNote(freq, 'square', (i === 8 ? 0.6 : 0.15), 0.1), timings[i]);
+                });
+            }
+        };
+
+        // --- DOM ELEMENTS & LOGIC ---
+        const screens = {
+            login: document.getElementById('screen-login'),
+            briefing: document.getElementById('screen-briefing'),
+            tutorial: document.getElementById('screen-tutorial'),
+            game: document.getElementById('screen-game'),
+            result: document.getElementById('screen-result')
+        };
+        const footer = document.getElementById('footer');
+        const hud = document.getElementById('hud');
+
+        function showScreen(screenName) {
+            Object.values(screens).forEach(s => s.classList.add('hidden-section'));
+            screens[screenName].classList.remove('hidden-section');
+            window.scrollTo(0,0);
+        }
+
+        // Listeners
+        document.getElementById('btn-mute').addEventListener('click', () => {
+            initAudio();
+            toggleMute();
+            sfx.click();
+        });
+
+        document.getElementById('btn-login').addEventListener('click', () => {
+            const name = document.getElementById('input-name').value.trim();
+            const nik = document.getElementById('input-nik').value.trim();
+            
+            if (name === '' || nik === '') {
+                // simple visual shake instead of alert
+                document.getElementById('screen-login').classList.add('animate-pop');
+                setTimeout(() => document.getElementById('screen-login').classList.remove('animate-pop'), 300);
+                return;
+            }
+
+            gameState.name = name;
+            gameState.nik = nik;
+            
+            initAudio(); // Must init on user gesture
+            sfx.click();
+            startBGM();
+            
+            showScreen('briefing');
+            footer.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-start-tutorial').addEventListener('click', () => {
+            sfx.click();
+            showScreen('tutorial');
+        });
+
+        document.getElementById('btn-start-game').addEventListener('click', () => {
+            sfx.click();
+            showScreen('game');
+            hud.classList.remove('hidden-section');
+            renderQuestion();
+        });
+
+        // Game Logic
+        const answerBtns = document.querySelectorAll('.answer-btn');
+        answerBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                handleAnswer(e.target.dataset.answer);
+            });
+        });
+
+        function renderQuestion() {
+            const q = questions[gameState.currentQ];
+            document.getElementById('q-number').innerText = gameState.currentQ + 1;
+            document.getElementById('q-scenario').innerText = q.scenario;
+            document.getElementById('data-pkm').innerText = q.data.pkm + ' ctn';
+            document.getElementById('data-maxdis').innerText = q.data.maxdis + ' ctn';
+            document.getElementById('data-maxpallet').innerText = q.data.maxpallet + ' ctn';
+            
+            // Retrigger entrance animation
+            const card = document.getElementById('dialog-card');
+            card.classList.remove('card-enter');
+            void card.offsetWidth; // trigger reflow
+            card.classList.add('card-enter');
+
+            updateHUD();
+        }
+
+        function updateHUD() {
+            // Progress Bar
+            const percent = (gameState.currentQ / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+            
+            // Score/XP
+            document.getElementById('xp-counter').innerText = gameState.score * 100;
+            
+            // document.getElementById('xp-counter').classList.add('animate-pop');
+            // setTimeout(() => document.getElementById('xp-counter').classList.remove('animate-pop'), 300);
+
+            // Badges
+            if (gameState.currentQ >= 5) document.getElementById('badge-1').classList.add('active');
+            if (gameState.currentQ === 10) document.getElementById('badge-2').classList.add('active');
+        }
+
+        function handleAnswer(selected) {
+            const q = questions[gameState.currentQ];
+            const isCorrect = (selected === q.correct);
+            
+            if (isCorrect) {
+                gameState.score++;
+                sfx.correct();
+                showFeedbackModal(true, "RUTE VALID!", q.exp);
+            } else {
+                sfx.wrong();
+                showFeedbackModal(false, "MISS-ROUTE!", `Jalur seharusnya: ${q.correct}.<br><br>${q.exp}`);
+            }
+        }
+
+        const modal = document.getElementById('feedback-modal');
+        const modalBtn = document.getElementById('btn-next-q');
+
+        function showFeedbackModal(isCorrect, title, desc) {
+            const card = document.getElementById('feedback-card');
+            document.getElementById('feedback-icon').innerText = isCorrect ? '📦✅' : '⚠️';
+            document.getElementById('feedback-title').innerText = title;
+            document.getElementById('feedback-title').className = `text-3xl font-black mb-2 uppercase tracking-tight ${isCorrect ? 'text-green-600' : 'text-red-600'}`;
+            document.getElementById('feedback-desc').innerHTML = desc;
+            
+            if(isCorrect) {
+                card.style.backgroundColor = '#e8f5e9'; 
+                modalBtn.className = "neo-btn neo-btn-green w-full py-4 text-lg";
+            } else {
+                card.style.backgroundColor = '#ffebee'; 
+                modalBtn.className = "neo-btn neo-btn-red w-full py-4 text-lg";
+            }
+
+            modal.classList.remove('hidden-section');
+            card.classList.add('animate-pop');
+        }
+
+        modalBtn.addEventListener('click', () => {
+            sfx.click();
+            modal.classList.add('hidden-section');
+            gameState.currentQ++;
+            
+            if (gameState.currentQ < questions.length) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        function showResults() {
+            hud.classList.add('hidden-section');
+            showScreen('result');
+            updateHUD(); // Max out progress
+
+            const accuracy = (gameState.score / questions.length) * 100;
+            const passed = accuracy >= 80;
+
+            document.getElementById('res-name').innerText = gameState.name;
+            document.getElementById('res-nik').innerText = gameState.nik;
+            document.getElementById('res-score').innerText = `${accuracy}%`;
+
+            const statusEl = document.getElementById('res-status');
+            const msgEl = document.getElementById('res-message');
+
+            if (passed) {
+                sfx.win();
+                statusEl.innerText = "LULUS SERTIFIKASI DISPATCHER";
+                statusEl.className = "text-xl font-black uppercase tracking-widest mb-3 p-3 border-2 border-[var(--exp-blue)] bg-green-400 text-white rounded";
+                msgEl.innerText = "Luar biasa! Analisa routing storage kamu sangat presisi. Manifest gudang aman!";
+            } else {
+                statusEl.innerText = "AKURASI DI BAWAH STANDAR";
+                statusEl.className = "text-xl font-black uppercase tracking-widest mb-3 p-3 border-2 border-[var(--exp-blue)] bg-red-500 text-white rounded";
+                msgEl.innerText = "Target akurasi 80%. Baca lagi buku panduan gudang dan hati-hati saat mengecek resi!";
+            }
+        }
+    </script>
+</body>
+</html>
